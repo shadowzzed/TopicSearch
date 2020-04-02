@@ -1,4 +1,4 @@
-package com.zed.nlp.service;
+package com.zed.topic.search.nlp.service;
 
 import java.io.IOException;
 import java.util.List;

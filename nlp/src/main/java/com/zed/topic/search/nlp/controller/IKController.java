@@ -1,7 +1,7 @@
-package com.zed.nlp.controller;
+package com.zed.topic.search.nlp.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.zed.nlp.service.IKService;
+import com.zed.topic.search.nlp.service.IKService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.web.bind.annotation.GetMapping;

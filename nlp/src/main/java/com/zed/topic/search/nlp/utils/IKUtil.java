@@ -1,4 +1,4 @@
-package com.zed.nlp.utils;
+package com.zed.topic.search.nlp.utils;
 
 import org.wltea.analyzer.core.IKSegmenter;
 import org.wltea.analyzer.core.Lexeme;

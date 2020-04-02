@@ -1,7 +1,7 @@
-package com.zed.nlp.service.impl;
+package com.zed.topic.search.nlp.service.impl;
 
-import com.zed.nlp.service.IKService;
-import com.zed.nlp.utils.IKUtil;
+import com.zed.topic.search.nlp.service.IKService;
+import com.zed.topic.search.nlp.utils.IKUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
