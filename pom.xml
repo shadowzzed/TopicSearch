@@ -27,6 +27,7 @@
     <modules>
         <module>topic-search-dependencies</module>
         <module>nlp</module>
+        <module>core</module>
     </modules>
 
 

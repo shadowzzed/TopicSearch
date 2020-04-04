@@ -21,6 +21,7 @@
     </properties>
     <dependencyManagement>
         <dependencies>
+            <!-- spring cloud begin-->
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
@@ -35,6 +36,37 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <!-- spring cloud end -->
+
+            <!-- local begin -->
+            <dependency>
+                <groupId>com.zed</groupId>
+                <artifactId>topic-core</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+
+            <!-- local end -->
+
+            <!-- dev utils begin -->
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <optional>true</optional>
+                <version>1.18.8</version>
+            </dependency>
+            <!-- jsoup-->
+            <dependency>
+                <groupId>org.jsoup</groupId>
+                <artifactId>jsoup</artifactId>
+                <version>1.12.1</version>
+            </dependency>
+            <!-- htmlunit-->
+            <dependency>
+                <groupId>net.sourceforge.htmlunit</groupId>
+                <artifactId>htmlunit</artifactId>
+                <version>2.36.0</version>
+            </dependency>
+            <!-- dev utils end-->
         </dependencies>
     </dependencyManagement>
 
