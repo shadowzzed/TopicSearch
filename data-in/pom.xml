@@ -12,6 +12,7 @@
     <artifactId>data-in</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>data-in</name>
+    <packaging>jar</packaging>
     <description>get data by web crawler</description>
 
     <properties>
@@ -24,10 +25,7 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
-        </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -40,12 +38,17 @@
         </dependency>
         <!-- Spring Boot End -->
 
-
+        <!-- Spring Cloud Begin -->
         <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <optional>true</optional>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+        </dependency>
+        <!-- Spring Cloud End -->
+
         <dependency>
             <groupId>com.zed</groupId>
             <artifactId>topic-core</artifactId>

@@ -71,7 +71,8 @@ public class WebReptileCNKI {
             // get table
             Elements content = document.getElementsByClass("pageBar_top").select("tr");
             // get each row
-            for (Element row: content)
+            Elements content_1 = document.getElementsByClass("GridTableContent").select("tr");
+            for (Element row: content_1)
                 this.getPaper(row);
             // get all page urls
             String total_temp = content.get(0).select("span.countPageMark").text();
@@ -90,7 +91,8 @@ public class WebReptileCNKI {
                 executorService.execute(new CNKIRunnable(start, keyword));
                 start++;
             }
-        } catch (IOException e) {
+            Thread.sleep(100000L);
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         } finally {
             webClient.close();
@@ -119,6 +121,7 @@ public class WebReptileCNKI {
         input.setValueAttribute(keyword);
         DomElement btnSearch = htmlPage.getElementById("btnSearch");
         btnSearch.click();
+        webClient.waitForBackgroundJavaScript(30000);
     }
 
     // add urls to list
@@ -141,7 +144,7 @@ public class WebReptileCNKI {
     private void getNextPagePaper(String url, WebClient webClient) throws IOException {
         HtmlPage page = (HtmlPage) webClient.getPage(url);
         Document document = Jsoup.parse(page.asXml());
-        Elements rows = document.getElementsByClass("pageBar_top").select("tr");
+        Elements rows = document.getElementsByClass("GridTableContent").select("tr");
 //        log.info("document:{}", document);
         for (Element row: rows)
             this.getPaper(row);
@@ -188,6 +191,7 @@ public class WebReptileCNKI {
         // get webclient
         WebClient webClient = new WebClient(BrowserVersion.CHROME);
         webClient.getOptions().setCssEnabled(false);
+        webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setJavaScriptEnabled(true);
         webClient.setAjaxController(new NicelyResynchronizingAjaxController());
         webClient.waitForBackgroundJavaScript(30000);

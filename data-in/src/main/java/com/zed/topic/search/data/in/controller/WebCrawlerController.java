@@ -4,6 +4,7 @@ import com.zed.topic.search.data.in.service.WormService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -23,6 +24,11 @@ public class WebCrawlerController {
         if (flag)
             return "success";
         else return "fail";
+    }
+
+    @RequestMapping("/hello")
+    public String hello() {
+        return "hello";
     }
 
 }
