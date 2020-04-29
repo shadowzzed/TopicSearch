@@ -223,10 +223,10 @@ public class WebReptileCNKI {
                     paper.setDb(td.get(i).text());
                     break;
                 case 6:
-                    paper.setRef(td.get(i).text());
+                    paper.setRef(Integer.valueOf(td.get(i).text()));
                     break;
                 case 7:
-                    paper.setDownloads(td.get(i).text());
+                    paper.setDownloads(Integer.valueOf(td.get(i).text()));
                     break;
                 default:
                     break;
