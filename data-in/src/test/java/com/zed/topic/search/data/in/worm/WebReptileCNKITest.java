@@ -7,6 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.Assert.*;
 
 /**
@@ -31,5 +34,16 @@ public class WebReptileCNKITest {
     @Test
     public void getCNKIContent() {
         cnki.getCNKIContent("中文分词");
+    }
+
+    @Test
+    public void test() {
+        List<Integer> list = new ArrayList<>(10);
+        list.add(1);
+        list.add(2);
+        list.add(3);
+//        list.clear();
+        list = new ArrayList<>(10);
+        System.out.println(list.size());
     }
 }

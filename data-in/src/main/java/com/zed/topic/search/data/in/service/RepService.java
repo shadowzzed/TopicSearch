@@ -1,5 +1,5 @@
 package com.zed.topic.search.data.in.service;
-
+import com.zed.topic.search.core.pojo.Keywords;
 import com.zed.topic.search.core.pojo.Paper;
 
 import java.util.List;
@@ -10,5 +10,12 @@ import java.util.List;
  * @contact shadowl91@163.com
  */
 public interface RepService {
-    int batchInsert(List<Paper> list);
+
+    int batchInsertPaper(List<Paper> list);
+
+    Paper getPaper1();
+
+    int insertKeyword(String keyword);
+
+    Keywords searchKeyWord(Keywords keywords);
 }

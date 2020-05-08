@@ -1,13 +1,14 @@
 package com.zed.topic.search.data.in.worm;
 
-import com.gargoylesoftware.htmlunit.BrowserVersion;
-import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
-import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.*;
 import com.gargoylesoftware.htmlunit.html.DomElement;
+import com.gargoylesoftware.htmlunit.html.HTMLParserListener;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
+import com.gargoylesoftware.htmlunit.javascript.JavaScriptErrorListener;
 import com.zed.topic.search.core.configuration.Config;
 import com.zed.topic.search.core.pojo.Paper;
+import com.zed.topic.search.data.in.service.RepService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
@@ -18,9 +19,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
@@ -38,6 +42,16 @@ public class WebReptileCNKI {
     @Autowired
     private Config config;
 
+    @Autowired
+    private RepService repService;
+
+    private ExecutorService executorService = Executors.newFixedThreadPool(5);
+
+
+    private List<Paper> list = new Vector<>(128);
+
+//    private List<Paper> list = new ArrayList<>(128);
+
     private String UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.132 Safari/537.36";
 
     private static Pattern dbcode_pattern;
@@ -52,6 +66,14 @@ public class WebReptileCNKI {
         dbcode_pattern = Pattern.compile(dbcode);
         dbname_pattern = Pattern.compile(dbname);
         filename_pattern = Pattern.compile(filename);
+    }
+
+    public void clearList() {
+        list.clear();
+    }
+
+    public List<Paper> getList() {
+        return list;
     }
 
     /**
@@ -72,8 +94,8 @@ public class WebReptileCNKI {
             Elements content = document.getElementsByClass("pageBar_top").select("tr");
             // get each row
             Elements content_1 = document.getElementsByClass("GridTableContent").select("tr");
-            for (Element row: content_1)
-                this.getPaper(row);
+//            for (Element row: content_1)
+//                this.getPaper(row);
             // get all page urls
             String total_temp = content.get(0).select("span.countPageMark").text();
             int totalPages = Integer.parseInt(total_temp.substring(2));
@@ -85,14 +107,17 @@ public class WebReptileCNKI {
 //                this.getNextPagePaper(nextURL, webClient);
 //            }
             int num = totalPages / 20;
-            ExecutorService executorService = Executors.newFixedThreadPool(num + 1);
-            int start = 0;
-            while (start < num) {
-                executorService.execute(new CNKIRunnable(start, keyword));
-                start++;
-            }
-            Thread.sleep(100000L);
-        } catch (IOException | InterruptedException e) {
+            // if page numbers > 100 force webcrawler to get page from 1 to 100
+            if (num > 5)
+                num = 4;
+            executorService.execute(new CNKIRunnable(0, keyword));
+//            int start = 0;
+//            while (start < num) {
+//                executorService.execute(new CNKIRunnable(start, keyword));
+//                start++;
+//            }
+//            Thread.sleep(100000L);
+        } catch (IOException e) {
             e.printStackTrace();
         } finally {
             webClient.close();
@@ -141,13 +166,13 @@ public class WebReptileCNKI {
     }
 
     // get papers in next page
-    private void getNextPagePaper(String url, WebClient webClient) throws IOException {
+    private void getNextPagePaper(String url, WebClient webClient, String keyword) throws IOException {
         HtmlPage page = (HtmlPage) webClient.getPage(url);
         Document document = Jsoup.parse(page.asXml());
         Elements rows = document.getElementsByClass("GridTableContent").select("tr");
 //        log.info("document:{}", document);
         for (Element row: rows)
-            this.getPaper(row);
+            this.getPaper(row, keyword);
     }
 
     private void getNextPagePaperRunnable() {
@@ -158,12 +183,12 @@ public class WebReptileCNKI {
 
         private int startPosition;
 
-        private int offset = 20;
+        private int offset = 15;
 
         private String keyword;
 
         public CNKIRunnable(int startPosition, String keyword) {
-            this.startPosition = startPosition * 20;
+            this.startPosition = startPosition * 15;
             this.keyword = keyword;
         }
 
@@ -177,7 +202,7 @@ public class WebReptileCNKI {
                     count++;
                     String url = getPageUrl(count + startPosition);
                     log.info("[multiple threads]keyword={},page={}", keyword, count + startPosition);
-                    getNextPagePaper(url, webClient);
+                    getNextPagePaper(url, webClient, keyword);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -192,18 +217,21 @@ public class WebReptileCNKI {
         WebClient webClient = new WebClient(BrowserVersion.CHROME);
         webClient.getOptions().setCssEnabled(false);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
+        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
         webClient.getOptions().setJavaScriptEnabled(true);
         webClient.setAjaxController(new NicelyResynchronizingAjaxController());
         webClient.waitForBackgroundJavaScript(30000);
         return webClient;
     }
 
-    private Paper getPaper(Element row) throws IOException {
+    private Paper getPaper(Element row, String keyword) throws IOException {
         if (StringUtils.isBlank(row.attr("bgcolor")))
             return null;
         Elements td = row.getElementsByTag("td");
         Paper paper = new Paper();
         for (int i = 0; i < 8; i++) {
+            if (!StringUtils.isNotBlank(td.get(i).text()))
+                continue;
             switch (i) {
                 case 1:
                     paper.setName(td.get(i).text());
@@ -233,7 +261,12 @@ public class WebReptileCNKI {
             }
         }
         log.info("{}",paper);
-        // TODO save into db
+        paper.setKeyword(keyword);
+        list.add(paper);
+        if (list.size()>=100) {
+            repService.batchInsertPaper(list);
+            list.clear();
+        }
         return paper;
     }
 

@@ -11,8 +11,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.*;
-
 /**
  * @author Zed
  * @date 2020/4/28 下午9:33
@@ -37,8 +35,14 @@ public class RepServiceImplTest {
         paper.setRef(10);
         paper.setSource("111");
         paper.setSummary("ddd");
+        paper.setKeyword("keyword");
         List<Paper> list = new ArrayList<>();
         list.add(paper);
-        repService.batchInsert(list);
+        repService.batchInsertPaper(list);
+    }
+
+    @Test
+    public void test() {
+        System.out.println(repService.findPaperByFileCode("11"));
     }
 }

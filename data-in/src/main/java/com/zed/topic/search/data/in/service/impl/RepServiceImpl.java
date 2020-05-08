@@ -1,12 +1,15 @@
 package com.zed.topic.search.data.in.service.impl;
 
-import com.zed.topic.search.core.mapper.PaperMapper;
+import com.zed.topic.search.core.pojo.Keywords;
 import com.zed.topic.search.core.pojo.Paper;
+import com.zed.topic.search.core.repo.KeyWordsRepo;
+import com.zed.topic.search.core.repo.PaperRepo;
 import com.zed.topic.search.data.in.service.RepService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.*;
 
 /**
  * @author Zed
@@ -14,15 +17,42 @@ import java.util.List;
  * @contact shadowl91@163.com
  */
 @Service
+@Slf4j
 public class RepServiceImpl implements RepService {
+
     @Autowired
-    private PaperMapper mapper;
+    private PaperRepo paperRepo;
+
+    @Autowired
+    private KeyWordsRepo keyWordsRepo;
 
     @Override
-    public int batchInsert(List<Paper> list) {
-        if (list.size() < 1)
-            return -1;
-        mapper.batchInsert(list);
+    public int batchInsertPaper(List<Paper> list) {
+        try {
+            paperRepo.saveAll(list);
+        } catch (Exception e) {
+//            log.info("insert exception");
+        }
         return list.size();
+    }
+
+    @Override
+    public Paper getPaper1() {
+        return paperRepo.getOnePaper();
+    }
+
+    @Override
+    public int insertKeyword(String keyword) {
+        Keywords keywords = new Keywords();
+        keywords.setKeyword(keyword);
+        Keywords target = this.searchKeyWord(keywords);
+        if (target == null)
+            return -1;
+        else return 1;
+    }
+
+    @Override
+    public Keywords searchKeyWord(Keywords keywords) {
+       return keyWordsRepo.findByKeyword(keywords.getKeyword());
     }
 }
