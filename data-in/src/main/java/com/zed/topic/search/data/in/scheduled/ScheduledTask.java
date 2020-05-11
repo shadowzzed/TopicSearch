@@ -8,6 +8,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.List;
+
 /**
  * @author Zed
  * @date 2020/5/9 上午12:10
@@ -25,10 +27,21 @@ public class ScheduledTask {
     @Autowired
     private RestTemplate restTemplate;
 
-    @Scheduled(cron = "0 0 0/1 * * ? ")
-    public void dataInScheduled() {
+    @Scheduled(cron = "0 0/10 * * * ? ")
+    public void dataInScheduledPerMin() {
         Paper paper = repService.getPaper1();
         String summary = paper.getSummary();
         dataInAutoService.dataInByKeyword(summary);
+    }
+
+    @Scheduled(cron = "0 0 0/1 * * ? ")
+    public void dataInScheduledPerHour() {
+        List<Paper> papers = repService.getPaper10();
+        if (papers == null)
+            return;
+        for (Paper paper: papers) {
+            String summary = paper.getSummary();
+            dataInAutoService.dataInByKeyword(summary);
+        }
     }
 }

@@ -260,8 +260,8 @@ public class WebReptileCNKI {
                     break;
             }
         }
-        log.info("{}",paper);
         paper.setKeyword(keyword);
+        log.info("{}",paper);
         list.add(paper);
         if (list.size()>=100) {
             repService.batchInsertPaper(list);

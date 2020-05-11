@@ -38,12 +38,12 @@
             </dependency>
             <!-- spring cloud end -->
 
-            <!-- local begin -->
-            <dependency>
-                <groupId>com.zed</groupId>
-                <artifactId>topic-core</artifactId>
-                <version>0.0.1-SNAPSHOT</version>
-            </dependency>
+<!--            &lt;!&ndash; local begin &ndash;&gt;-->
+<!--            <dependency>-->
+<!--                <groupId>com.zed</groupId>-->
+<!--                <artifactId>topic-core</artifactId>-->
+<!--                <version>0.0.1-SNAPSHOT</version>-->
+<!--            </dependency>-->
 
             <!-- local end -->
 

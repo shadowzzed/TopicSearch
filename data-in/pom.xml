@@ -52,6 +52,7 @@
         <dependency>
             <groupId>com.zed</groupId>
             <artifactId>topic-core</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.jsoup</groupId>
@@ -95,6 +96,9 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>com.zed.topic.search.data.in.DataInApplication</mainClass>
+                </configuration>
             </plugin>
         </plugins>
     </build>

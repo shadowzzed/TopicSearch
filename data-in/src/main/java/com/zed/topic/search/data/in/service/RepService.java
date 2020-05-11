@@ -15,6 +15,8 @@ public interface RepService {
 
     Paper getPaper1();
 
+    List<Paper> getPaper10();
+
     int insertKeyword(String keyword);
 
     Keywords searchKeyWord(Keywords keywords);

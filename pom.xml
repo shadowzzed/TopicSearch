@@ -27,7 +27,9 @@
     <modules>
         <module>topic-search-dependencies</module>
         <module>nlp</module>
-        <module>core</module>
+        <module>topic-core</module>
+        <module>data-in</module>
+        <module>data-out</module>
     </modules>
 
 
@@ -37,6 +39,13 @@
                 <groupId>com.zed</groupId>
                 <artifactId>topic-search-dependencies</artifactId>
                 <version>${project.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.zed</groupId>
+                <artifactId>topic-core</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>

@@ -5,6 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * @author Zed
  * @date 2020/5/7 下午11:29
@@ -14,4 +16,7 @@ import org.springframework.stereotype.Repository;
 public interface PaperRepo extends JpaRepository<Paper, String> {
     @Query(value = "SELECT * FROM topic_search.paper limit 1", nativeQuery = true)
     Paper getOnePaper();
+
+    @Query(value = "SELECT * FROM topic_search.paper limit 10", nativeQuery = true)
+    List<Paper> getTenPaper();
 }

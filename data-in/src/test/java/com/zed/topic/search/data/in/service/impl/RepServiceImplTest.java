@@ -43,6 +43,6 @@ public class RepServiceImplTest {
 
     @Test
     public void test() {
-        System.out.println(repService.findPaperByFileCode("11"));
+//        System.out.println(repService.findPaperByFileCode("11"));
     }
 }

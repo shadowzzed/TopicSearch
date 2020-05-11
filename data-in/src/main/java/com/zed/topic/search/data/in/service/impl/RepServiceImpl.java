@@ -42,10 +42,21 @@ public class RepServiceImpl implements RepService {
     }
 
     @Override
+    public List<Paper> getPaper10() {
+        List<Paper> papers = paperRepo.getTenPaper();
+        if (papers.size() < 10) {
+            log.error("[get top 10 papers - error] paper.size={}",papers.size());
+            return null;
+        }
+        return papers;
+    }
+
+    @Override
     public int insertKeyword(String keyword) {
         Keywords keywords = new Keywords();
         keywords.setKeyword(keyword);
-        Keywords target = this.searchKeyWord(keywords);
+        Keywords target = keyWordsRepo.save(keywords);
+//        Keywords target = this.searchKeyWord(keywords);
         if (target == null)
             return -1;
         else return 1;

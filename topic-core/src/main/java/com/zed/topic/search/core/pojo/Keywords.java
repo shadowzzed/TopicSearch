@@ -13,6 +13,7 @@ import lombok.Data;
 @Entity
 public class Keywords implements Serializable {
     @Id
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Integer id;
 
     private String keyword;

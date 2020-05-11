@@ -2,6 +2,7 @@ package com.zed.topic.search.nlp.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.zed.topic.search.nlp.service.IKService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,6 +19,7 @@ import java.util.List;
  */
 @RestController
 @RefreshScope
+@Slf4j
 public class IKController {
 
     @Autowired
@@ -26,6 +28,7 @@ public class IKController {
     @GetMapping("/str/ch/{msg}")
     public String getCuts(@PathVariable("msg") String msg) throws IOException {
         List<String> list = ikService.getCuts(msg);
+        log.info("list.size = {}, list = {}", list.size(), JSON.toJSONString(list));
         return JSON.toJSONString(list);
     }
 

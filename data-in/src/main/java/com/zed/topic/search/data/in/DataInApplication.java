@@ -7,6 +7,7 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.ComponentScans;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import tk.mybatis.spring.annotation.MapperScan;
 
 import java.util.logging.Level;
@@ -17,6 +18,7 @@ import java.util.logging.Level;
 @EnableDiscoveryClient
 @EntityScan("com.zed.topic.search.core.pojo")
 @EnableJpaRepositories("com.zed.topic.search.core.repo")
+@EnableScheduling
 public class DataInApplication {
 
     public static void main(String[] args) {
