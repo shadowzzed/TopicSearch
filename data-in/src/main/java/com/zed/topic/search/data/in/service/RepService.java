@@ -13,6 +13,8 @@ public interface RepService {
 
     int batchInsertPaper(List<Paper> list);
 
+    int save(Paper paper);
+
     Paper getPaper1();
 
     List<Paper> getPaper10();

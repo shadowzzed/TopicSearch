@@ -37,6 +37,14 @@ public class RepServiceImpl implements RepService {
     }
 
     @Override
+    public int save(Paper paper) {
+        if (paper == null)
+            return -1;
+        paperRepo.save(paper);
+        return 1;
+    }
+
+    @Override
     public Paper getPaper1() {
         return paperRepo.getOnePaper();
     }

@@ -3,6 +3,8 @@ package com.zed.topic.search.core.pojo;
 import java.io.Serializable;
 import javax.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.Generated;
+import org.hibernate.annotations.GenerationTime;
 
 /**
   * @author Zed
@@ -32,6 +34,10 @@ public class Paper implements Serializable {
     private Integer downloads;
 
     private String keyword;
+
+    @Column(name="insert_dt",columnDefinition="TIMESTAMP DEFAULT CURRENT_TIMESTAMP",insertable = false,updatable = false)
+    @Generated(GenerationTime.INSERT)
+    private String insert_dt;
 
     private static final long serialVersionUID = 1L;
 }

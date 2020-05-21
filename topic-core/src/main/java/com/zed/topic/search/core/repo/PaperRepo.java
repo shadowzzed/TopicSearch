@@ -14,9 +14,31 @@ import java.util.List;
  */
 @Repository
 public interface PaperRepo extends JpaRepository<Paper, String> {
-    @Query(value = "SELECT * FROM topic_search.paper limit 1", nativeQuery = true)
+    @Query(value = "SELECT * FROM topic_search.paper order by insert_dt desc limit 1", nativeQuery = true)
     Paper getOnePaper();
 
-    @Query(value = "SELECT * FROM topic_search.paper limit 10", nativeQuery = true)
+    @Query(value = "SELECT * FROM topic_search.paper order by insert_dt desc limit 10", nativeQuery = true)
     List<Paper> getTenPaper();
+
+    /*******************************************************************************/
+
+    @Query(value = "select * from (select * from paper where keyword like ?) as ta order by downloads desc limit 10",nativeQuery = true)
+    List<Paper> getTopTenPaperByKeyword(String keyword);
+
+    @Query(value = "select count(*) from (select * from paper where keyword like ?) as ta where date like '2020%'", nativeQuery = true)
+    int getCount2020(String keyword);
+
+    @Query(value = "select count(*) from (select * from paper where keyword like ?) as ta where date like '2019%'", nativeQuery = true)
+    int getCount2019(String keyword);
+
+    @Query(value = "select count(*) from (select * from paper where keyword like ?) as ta where date like '2018%'", nativeQuery = true)
+    int getCount2018(String keyword);
+
+    @Query(value = "select count(*) from (select * from paper where keyword like ?) as ta where date like '2017%'", nativeQuery = true)
+    int getCount2017(String keyword);
+
+    @Query(value = "select count(*) from (select * from paper where keyword like ?) as ta where date like '2016%'", nativeQuery = true)
+    int getCount2016(String keyword);
+
+
 }

@@ -3,6 +3,8 @@ package com.zed.topic.search.data.in.scheduled;
 import com.zed.topic.search.core.pojo.Paper;
 import com.zed.topic.search.data.in.service.DataInAutoService;
 import com.zed.topic.search.data.in.service.RepService;
+import org.apache.bcel.generic.IF_ACMPEQ;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -30,8 +32,15 @@ public class ScheduledTask {
     @Scheduled(cron = "0 0/10 * * * ? ")
     public void dataInScheduledPerMin() {
         Paper paper = repService.getPaper1();
+        if (paper == null) {
+            this.dataInScheduledPerHour();
+            return;
+        }
         String summary = paper.getSummary();
-        dataInAutoService.dataInByKeyword(summary);
+        if (!StringUtils.isEmpty(summary))
+            dataInAutoService.dataInByKeyword(summary);
+        else
+            this.dataInScheduledPerHour();
     }
 
     @Scheduled(cron = "0 0 0/1 * * ? ")

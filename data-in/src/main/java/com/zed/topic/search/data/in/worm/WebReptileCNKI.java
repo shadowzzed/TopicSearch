@@ -98,19 +98,25 @@ public class WebReptileCNKI {
 //                this.getPaper(row);
             // get all page urls
             String total_temp = content.get(0).select("span.countPageMark").text();
-            int totalPages = Integer.parseInt(total_temp.substring(2));
-            log.info("keyword:{},totalPages:{}",keyword, totalPages);
+//            int totalPages = Integer.parseInt(total_temp.substring(2));
+//            log.info("keyword:{},totalPages:{}",keyword, totalPages);
 //            this.addURLs(nextPageList, totalPages);
 //            int count = 1;
 //            for (String nextURL: nextPageList) {
 //                log.info("this page is:{}", ++count);
 //                this.getNextPagePaper(nextURL, webClient);
 //            }
-            int num = totalPages / 20;
-            // if page numbers > 100 force webcrawler to get page from 1 to 100
-            if (num > 5)
-                num = 4;
-            executorService.execute(new CNKIRunnable(0, keyword));
+//            int num = totalPages / 20;
+//            // if page numbers > 100 force webcrawler to get page from 1 to 100
+//            if (num > 5)
+//                num = 4;
+            for (int i = 0; i < 15; i+=2) {
+                String pageUrl = getPageUrl(i);
+                getNextPagePaper(pageUrl, webClient, keyword);
+            }
+//            executorService.execute(new CNKIRunnable(0, keyword));
+
+
 //            int start = 0;
 //            while (start < num) {
 //                executorService.execute(new CNKIRunnable(start, keyword));
@@ -175,9 +181,9 @@ public class WebReptileCNKI {
             this.getPaper(row, keyword);
     }
 
-    private void getNextPagePaperRunnable() {
-
-    }
+//    private void getNextPagePaperSingle(WebClient webClient, String keyword) throws IOException {
+//        getContentPapers(keyword, webClient);
+//    }
 
     class CNKIRunnable implements Runnable {
 
@@ -200,7 +206,7 @@ public class WebReptileCNKI {
                 int count = 0;
                 while (count < offset) {
                     count++;
-                    String url = getPageUrl(count + startPosition);
+                    String url = getPageUrl(count * 2 + startPosition);
                     log.info("[multiple threads]keyword={},page={}", keyword, count + startPosition);
                     getNextPagePaper(url, webClient, keyword);
                 }
@@ -262,11 +268,13 @@ public class WebReptileCNKI {
         }
         paper.setKeyword(keyword);
         log.info("{}",paper);
-        list.add(paper);
-        if (list.size()>=100) {
-            repService.batchInsertPaper(list);
-            list.clear();
-        }
+        if (!StringUtils.isEmpty(paper.getFilecode()) && !StringUtils.isEmpty(paper.getName()))
+            repService.save(paper);
+//        list.add(paper);
+//        if (list.size()>=100) {
+//            repService.batchInsertPaper(list);
+//            list.clear();
+//        }
         return paper;
     }
 

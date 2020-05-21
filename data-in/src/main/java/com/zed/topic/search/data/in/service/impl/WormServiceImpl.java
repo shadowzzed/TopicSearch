@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * @author Zed
@@ -24,16 +26,32 @@ public class WormServiceImpl implements WormService {
     @Autowired
     private RepService repService;
 
+    private ExecutorService executorService = Executors.newFixedThreadPool(50);
+
     @Override
     public boolean getPapers(String keyword) {
         if (StringUtils.isEmpty(keyword))
             return false;
-        worm.getCNKIContent(keyword);
+        executorService.execute(new MyRunnable(keyword));
+        return true;
 //        List<Paper> list = worm.getList();
 //        if (list.size() > 1) {
 //            repService.batchInsertPaper(list);
 //            worm.clearList();
 //        }
-        return true;
+    }
+
+    class MyRunnable implements Runnable {
+
+        private String keyword;
+
+        public MyRunnable(String keyword) {
+            this.keyword = keyword;
+        }
+
+        @Override
+        public void run() {
+            worm.getCNKIContent(keyword);
+        }
     }
 }

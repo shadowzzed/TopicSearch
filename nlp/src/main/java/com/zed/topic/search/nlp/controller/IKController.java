@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.util.List;
 
 /**
@@ -27,6 +28,7 @@ public class IKController {
 
     @GetMapping("/str/ch/{msg}")
     public String getCuts(@PathVariable("msg") String msg) throws IOException {
+        msg = URLDecoder.decode(msg, "utf-8");
         List<String> list = ikService.getCuts(msg);
         log.info("list.size = {}, list = {}", list.size(), JSON.toJSONString(list));
         return JSON.toJSONString(list);

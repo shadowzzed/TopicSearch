@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.List;
 
 /**
@@ -32,7 +34,8 @@ public class DataInController {
     private DataInAutoService dataInAutoService;
 
     @GetMapping("/data/in/{keyword}")
-    public String dataIn(@PathVariable("keyword") String keyword) {
+    public String dataIn(@PathVariable("keyword") String keyword) throws UnsupportedEncodingException {
+        keyword = URLDecoder.decode(keyword, "utf-8");
         dataInAutoService.dataInByKeyword(keyword);
         return "success";
     }

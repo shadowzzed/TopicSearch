@@ -3,15 +3,22 @@ package com.zed.topic.search.data.in.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.zed.topic.search.core.configuration.Config;
 import com.zed.topic.search.core.pojo.Keywords;
+import com.zed.topic.search.data.in.config.DataInConfiguration;
 import com.zed.topic.search.data.in.service.DataInAutoService;
 import com.zed.topic.search.data.in.service.RepService;
+import com.zed.topic.search.data.in.worm.WebReptileCNKI;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.net.URLEncoder;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author Zed
@@ -23,7 +30,7 @@ import java.util.List;
 public class DataInAutoServiceImpl implements DataInAutoService {
 
     @Autowired
-    private Config config;
+    private DataInConfiguration config;
 
     @Autowired
     private RepService repService;
@@ -31,12 +38,29 @@ public class DataInAutoServiceImpl implements DataInAutoService {
     @Autowired
     private RestTemplate restTemplate;
 
+    @Autowired
+    private WebReptileCNKI webReptileCNKI;
+
+    private static Pattern pattern;
+
+    static {
+        pattern = Pattern.compile("[\\w]");
+    }
+
+    private ExecutorService executorService = Executors.newFixedThreadPool(5);
+
     @Override
     public void dataInByKeyword(String keyword) {
+        executorService.execute(new MyRunnable(keyword));
+    }
+
+    private void getDataSearchAndInsertKeyword(String keyword) {
         if (keyword.length() < 5) {
             this.insertKeywordAndPaper(keyword);
         }
         String keywords_extra = this.getDataNLP(keyword);
+        if (StringUtils.isEmpty(keywords_extra))
+            return;
         List<String> list = JSON.parseObject(keywords_extra, List.class);
         log.info("[get keywords] get list.size={}", list.size());
         if (list.size() < 1) {
@@ -47,7 +71,20 @@ public class DataInAutoServiceImpl implements DataInAutoService {
             log.info("[data in] keyword = {}", String.valueOf(str));
             this.insertKeywordAndPaper(String.valueOf(str));
         });
+    }
 
+    class MyRunnable implements Runnable {
+        private String keyword;
+
+        public MyRunnable(String keyword) {
+            this.keyword = keyword;
+
+        }
+
+        @Override
+        public void run() {
+            getDataSearchAndInsertKeyword(keyword);
+        }
     }
 
     private void insertKeywordAndPaper(String keyword) {
@@ -69,19 +106,19 @@ public class DataInAutoServiceImpl implements DataInAutoService {
 
     private String getDataWormDetail(String keyword, int count) {
         String response = "";
-        if (keyword.contains(".") || keyword.startsWith("1") || keyword.startsWith("2") || keyword.startsWith("3") ||
-        keyword.startsWith("4") || keyword.startsWith("5") || keyword.startsWith("6") || keyword.startsWith("7") ||
-        keyword.startsWith("8") || keyword.startsWith("9"))
+        if (StringUtils.isEmpty(keyword))
             return null;
         try {
             count++;
             if (count > 5)
                 return null;
             log.info("[data in - worm]fail and retry,keyword = {}, times = {}", keyword, count);
-            response = restTemplate.getForObject("http://worm-provider/worm/" + keyword, String.class);
-
+            webReptileCNKI.getCNKIContent(keyword);
+            //            String url = "http://"+ config.getWormAdd() + ":" + config.getWormPort() +"/worm/" + URLEncoder.encode(keyword, "utf-8");
+//            response = restTemplate.getForObject(url, String.class);
+            response = "success";
         } catch (Exception e) {
-            getDataWormDetail(keyword, count);
+            log.error(e.getMessage());
         }
         return response;
     }
@@ -93,9 +130,13 @@ public class DataInAutoServiceImpl implements DataInAutoService {
             if (count > 5)
                 return null;
             log.info("[data in - nlp]fail and retry,keyword{}, times = {}", keyword, count);
-            response = restTemplate.getForObject("http://ik-provider/str/ch/" + keyword, String.class);
+            String url = "http://"+ config.getNlpAdd() + ":" + config.getNlpPort() + "/str/ch/" + URLEncoder.encode(keyword, "utf-8");
+            log.info("get keywords, url = {}", url);
+            response = restTemplate.getForObject(url, String.class);
+
 
         } catch (Exception e) {
+            e.printStackTrace();
             getDataNLPDetail(keyword, count);
         }
         return response;
