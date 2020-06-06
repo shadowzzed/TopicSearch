@@ -26,6 +26,7 @@ public class MyController {
 
     @GetMapping("/api/year")
     public List<YearData> getData5Year(String keyword) {
+        log.info("get keyword = {}", keyword);
         List<YearData> list = new ArrayList<>();
         int num2020 = dataOutService.get2020(keyword);
         YearData yearData = new YearData();
@@ -52,16 +53,19 @@ public class MyController {
         yearData4.setNum(num2016);
         yearData4.setYear("2016");
         list.add(yearData4);
+
         return list;
     }
 
     @GetMapping("/api/10")
     public List<Paper> getTop10(String keyword) {
+        log.info("get keyword = {}", keyword);
         List<Paper> list = dataOutService.getTopTenPaperByKeyword(keyword);
         if (list.size() < 10) {
             log.error("list size = {}", list.size());
             return null;
         }
+        log.info("return list.size = {}",list.size());
         return list;
 
     }
