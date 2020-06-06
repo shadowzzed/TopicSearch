@@ -278,6 +278,20 @@ public class WebReptileCNKI {
         return paper;
     }
 
+    private Paper cleanData(Papaer paper) {
+        if (StringUtils.isEmpty(paper.getAuthor) ||
+            StringUtils.isEmpty(paper.getSummary) ||
+            StringUtils.isEmpty(paper.getDate) ||
+            StringUtils.isEmpty(paper.getSource) ||
+            paper.getDownloads == null 
+           )
+            return null;
+        HtmlPage htmlPage = webClient.getPage(paper.getSource);
+        if (htmlPage == null)
+            renull;
+        return paper;
+    }
+
     private Paper getSummary(String href, Paper paper) throws IOException {
         String url = "https://kns.cnki.net/KCMS/detail/detail.aspx?";
         Matcher dbcode = dbcode_pattern.matcher(href);
